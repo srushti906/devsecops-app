@@ -1,0 +1,33 @@
+name: devsecops-pipeline
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-scan-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Scan source for hardcoded secrets
+        run: |
+          docker run --rm -v "${{ github.workspace }}:/src" aquasec/trivy \
+            fs --scanners secret --exit-code 1 /src
+
+      - name: Build image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-app:latest .
+
+      - name: Scan image for vulnerabilities
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy \
+            image --scanners vuln --severity CRITICAL --exit-code 1 \
+            ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-app:latest
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Push image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-app:latest
