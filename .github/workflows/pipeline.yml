@@ -12,10 +12,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+     
       - name: Scan source for hardcoded secrets
         run: |
-          docker run --rm -v "${{ github.workspace }}:/src" aquasec/trivy \
-            fs --scanners secret --exit-code 1 /src
+          docker run --rm \
+            -v "$PWD:/src" \
+            aquasec/trivy:latest \
+            fs --scanners secret --exit-code 1 --debug /src
+
 
       - name: Build image
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-app:latest .
