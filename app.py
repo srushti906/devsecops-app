@@ -1,14 +1,31 @@
+# from flask import Flask
+# app = Flask(__name__)
+
+# @app.route("/")
+# def home():
+#        return "<h1>Hello DevSecOps v3</h1>"
+
+# @app.route("/health")
+# def health():
+#        return "ok"
+
+# if __name__ == "__main__":
+#     app.run(host="0.0.0.0", port=5000)
+
 from flask import Flask
+
 app = Flask(__name__)
 
 @app.route("/")
 def home():
-       return "<h1>Hello DevSecOps v3</h1>"
+    user_input = "2 + 2"
+    result = eval(user_input)  # INTENTIONALLY INSECURE: Bandit test
+    return f"<h1>Hello DevSecOps v2: {result}</h1>"
 
 @app.route("/health")
 def health():
-       return "ok"
+    return "ok"
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=False)
 
