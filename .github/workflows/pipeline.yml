@@ -19,7 +19,12 @@ jobs:
             -v "$PWD:/src" \
             aquasec/trivy:latest \
             fs --scanners secret --exit-code 1 --debug /src
+            
+      - name: Install Bandit
+        run: pip install bandit
 
+      - name: Bandit Python security scan
+        run: bandit -r . -ll
 
       - name: Build image
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-app:latest .
