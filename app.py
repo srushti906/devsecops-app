@@ -14,3 +14,5 @@ if __name__ == "__main__":
     # 0.0.0.0 is intentionally required for container networking
     app.run(host="0.0.0.0", port=5000, debug=False)  # nosec B104
     AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
+
+result = eval("2 + 2")
